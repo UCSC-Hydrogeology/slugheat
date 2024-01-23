@@ -1,10 +1,10 @@
-%%% =======================================================================
+%%% ==============================================================
 %%   Purpose:
-%       This function PRINTS results of sensitivity analysis to LOG
-%       and RES file
+%       This function PRINTS results of sensitivity analysis to 
+%       results (.res) and .log files
 %%   Last edit
 %       08/08/2023 by Kristin Dickerson, UCSC
-%%% =======================================================================
+%%% ==============================================================
 
 function PrintSensResults(Params, ...
                           Results,...
@@ -13,7 +13,7 @@ function PrintSensResults(Params, ...
                             ResFileId, ...
                             NumSensAnalyses)
 
-    %% Initialize
+%% Initialize
     Id = ResFileId;
     
     NumberOfSensorsUsed = length(SensorsToUse);
@@ -34,14 +34,14 @@ function PrintSensResults(Params, ...
     
     SensParams = [sens, kstd, mink, maxk, bins]';
 
-    %% Print header for analysis
+%% Print header for analysis
     fprintf(Id,'\n\n%s\n',[repmat(' ',1,fix((NC-length(String))/2)) ...
             repmat('-',1,length(String))]);
     fprintf(Id,'%s\n',[repmat(' ',1,fix((NC-length(String))/2)) String]);
     fprintf(Id,'%s\n\n',[repmat(' ',1,fix((NC-length(String))/2)) ...
             repmat('-',1,length(String))]);
 
-    %% Print input parameters
+%% Print input parameters
   
         % Header for input parameters
         String = 'Input parameters for sensitivity analysis:';
@@ -56,7 +56,6 @@ function PrintSensResults(Params, ...
         fprintf(Id,'%s\t\t\t\t%s\n\n\n','Thermal Conductivity Distribution Type:',Params.DistributionType);
 
         % Thermal conductivity distribution parameters for each sensor
-
         String = 'Thermal conductivity distribution parameters for each sensor:';
         fprintf(Id,'\n\n%s\n\n',String);
    
@@ -76,7 +75,7 @@ function PrintSensResults(Params, ...
         fprintf(Id, ...
             '%4.0f %15.3f %18.3f %15.3f %11.0f \n',SensParams);
 
-    %% Print results of analysis
+%% Print results of analysis
 
         % Header for input parameters
         String = 'Results for sensitivity analysis:';
@@ -93,7 +92,7 @@ function PrintSensResults(Params, ...
         fprintf(Id,'%s\t\t%2.0f\n\n','Final heat flow standard deviation (mW/m2):',Results.qstd);
         fprintf(Id,'%s\t\t\t%2.3f\n\n','Avereage heat flow uncertainty (mW/m2):',Results.AveUnc);
 
-    %% Print end of analysis
+%% Print end of analysis
     fprintf(Id, '\n%s\n', ['*********   ' char(datetime('now')) ...
     ' - End sensitivity analysis #  ' int2str(NumSensAnalyses) ' !   *********']);
    

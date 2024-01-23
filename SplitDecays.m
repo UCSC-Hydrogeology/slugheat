@@ -1,8 +1,9 @@
 %%% ======================================================================
 %%  Purpose: 
-%       This function splits the decay in two sets: one for FRICTIONAL DECAY 
-%       and one for HEAT PULSE DECAY 
-%       - Two markers given in header of .pen files: 
+%       This function splits the decays in two sets: frictional decay 
+%       following penetration and heat pulse decay following the 
+%       calibrated heat pulse
+%       - These are marked on the .pen file header
 %	        1st indicates beginning of the frictional decay
 %	        2nd indicates beginning of the heat pulse decay
 %%  Last edit:
@@ -57,9 +58,8 @@ function [FricTime, ...
     end
     
     
-    % Update .log file -- 
-    %% to remove???
-    % ----------------------------------------------------------------
+    % Update .log files 
+    % ------------------
     PrintStatus(LogFileId,'Split penetration and heat pulse data:',1);
         
         if PulseData

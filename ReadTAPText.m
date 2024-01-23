@@ -1,12 +1,13 @@
-%%% ==============================================================================
+%%% =======================================================================
 %%  Purpose: 
-%       This function READS in the tilt and pressure (.tap) information from the penetration that was chosen 
-%       in 'GetFiles' function and defined now as variable `TAPFile`. This file should have been created by SlugPen. 
-%       Instead of using the .tap text file, this function uses the TEXT file `TAPFile` 
-%       that houses structures containing these variables.
+%       This function READS in the tilt and pressure (.tap) information 
+%       from the penetration that was chosen in 'GetFiles' function and 
+%       defined now as variable `TAPFile`. This file should have been 
+%       created by SlugPen. This function uses the TEXT file .tap file to
+%       read in the data.
 %%  Last edit:
 %       08/11/2023 by Kristin Dickerson, UCSC
-%%% ======================================================================================
+%%% =======================================================================
 
 function [TAPRecord, ...
          Tilt, ...
@@ -20,6 +21,10 @@ function [TAPRecord, ...
          TiltMean, ...
          PenFilePath)
 
+%% Define variables from data in .tap text file
+
+   % Get the .tap text file with ending '.tap'
+   % ----------------------------------------
    if exist([PenFilePath TAPName '.tap'],'file')
         TAP = load([PenFilePath TAPName '.tap']);
         TAPRecord = TAP(:,1);
@@ -43,15 +48,20 @@ function [TAPRecord, ...
         % ----------------------------
     
         PrintStatus(LogFileId, ['TAP file ' TAPName '.tap', 'read ...'], 2)
-    
         PrintStatus(ProgramLogId, '-- Reading in TAP file',2)
-    elseif exist([PenFilePath TAPName '.TAP'],'file')
-        TAP = load([PenFilePath TAPName '.TAP']);
-        TAPRecord = TAP(:,1);
-        Tilt = TAP(:,2);
-        Depth = TAP(:,3);
-        PrintStatus(LogFileId,['TAP file ' [TAPName '.TAP'] ' read ...'],2);  
-    else
+  
+   % Get the .tap text file with ending '.TAP'
+   % ---------------------------------------
+   elseif exist([PenFilePath TAPName '.TAP'],'file')
+            TAP = load([PenFilePath TAPName '.TAP']);
+            TAPRecord = TAP(:,1);
+            Tilt = TAP(:,2);
+            Depth = TAP(:,3);
+            PrintStatus(LogFileId,['TAP file ' [TAPName '.TAP'] ' read ...'],2);  
+   
+   % If no tap record, use the mean tilt defined in .pen file
+   % ----------------------------------------------------------
+   else
         TAPRecord = [];
         PrintStatus(LogFileId,'TAP file not found ...',1);
         PrintStatus(LogFileId,['TAP data read in PEN file: Tilt = ' num2str(TiltMean,'%1.1f') ...

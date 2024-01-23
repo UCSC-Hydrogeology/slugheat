@@ -1,13 +1,13 @@
-%%% ==============================================================================
+%%% =======================================================================
 %%   Purpose: 
-%       This function updates the layout of SlugHeat. All labels, text boxes, checkboxes,
-%       legends, etc. are updated to current conditions.
-%
+%       This function updates the layout of the SlugHeat GUI. All labels, 
+%       text boxes, checkboxes,blegends, etc. are updated to current 
+%       conditions.
 %%   Last edit:
 %       07/27/2023 by Kristin Dickerson, UCSC 
-%%% ==============================================================================
+%%% =======================================================================
 
-function updateLabels(label_currentpathfull, CurrentPath, label_parfilename, ParFileName, label_penfilename, ...
+function updateLabels(label_currentpathfull, CurrentPath, label_penfilename, ...
     PenFileName, label_tapfilename, TAPFileName, label_resfilename, ...
     ResFileName, label_Cruise, CruiseName, ...
     label_Station, StationName, label_Penetration, Penetration, ...
@@ -16,7 +16,7 @@ function updateLabels(label_currentpathfull, CurrentPath, label_parfilename, Par
 
     label_currentpathfull.Text = ['...' CurrentPath(end-20:end)];
     label_currentpathfull.Tooltip = CurrentPath;
-    label_parfilename.Text = ParFileName;
+    %label_parfilename.Text = ParFileName;
 
     if ischar(PenFileName)
         label_penfilename.Text  = PenFileName;

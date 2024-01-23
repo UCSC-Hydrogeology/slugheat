@@ -1,7 +1,8 @@
 %%% ==============================================================================
-% 	Purpose: 
-%	This function INITIALIZES the program, loads in variables from MAT file,
-%   and begins writing the log
+%% 	Purpose: 
+%	    This function initializes SlugHeat
+%%  Last edit:
+%       01/14/2024 by Kristin Dickerson, UCSC
 %%% ==============================================================================
 
 function [Version, Update, ...
@@ -17,17 +18,12 @@ function [Version, Update, ...
 	clc 
 	clear 
 
-    % Load in MAT file with logos, images, and all default parameters for
-    % any general penetration
-    % --------------------------------------------------------------------
-    load SlugHeat22.mat;
-
-
     % Open temporary log file
     % -------------------------------------------------------
-	ProgramLogId = fopen('SlugHeat22.log', 'w');
-    CurrentDateTime = datestr(datetime('now'));
-    CurrentPath = [pwd '/'];
+    CurrentPath = [pwd '/']; % location of .par and .pen file should be placed in current folder before SlugHeat is run
+	ProgramLogId = fopen([CurrentPath '/outputs/SlugHeat22.log'], 'w');
+    CurrentDateTime = char(datetime('now'));
+    
     PrintStatus(ProgramLogId, '----------------------------------------------',1);
     PrintStatus(ProgramLogId, '----------------------------------------------',1);
 	PrintStatus(ProgramLogId,['SlugHeat22 start time: ' CurrentDateTime],1)
@@ -36,22 +32,10 @@ function [Version, Update, ...
 
 	PrintStatus(ProgramLogId, [CurrentDateTime ' Processing set up and data preparation'], 1)
 	PrintStatus(ProgramLogId, '==================================================================================================',2);
-    
-    % Add images from MAT file to layout
-    % ------------------------------------
-    % image_UCSCLogo.ImageSource = imshow(UCSCLogo);
-    % image_WHLogo.ImageSource = imshow(WoodsHoleLogo);
-    % image_OSULogo.ImageSource = imshow(OSULogo);
-    % image_SlugHeat.ImageSource = imshow(SlugHeatLogo);
-  
-
-    %  button_ControlWindowExit.Icon = imshow(xImage);
-    %  button_OpenControlsPanel.Icon = imshow(TabImage);
 
 
     % Define version information and other default parameters
     % -------------------------------------------------------
-    
     Version = '22';                         % Version number
     Update = '2022';                        % Date of last update
     NumberOfColumns = 79;                   % # of columns in Log and Res files
@@ -60,8 +44,6 @@ function [Version, Update, ...
     % Parameters (PAR) file name and path  
     % ---------------------------------------------
     PrintStatus(ProgramLogId, ' -- Finding parameter file...',1);
-
-    CurrentPath = [pwd '/']; % location of .par and .pen file should be placed in current folder before SlugHeat is run
 
 	% *****************************************************************
 	% If there is no default 'SlugHeat22.par' file in the current directory,

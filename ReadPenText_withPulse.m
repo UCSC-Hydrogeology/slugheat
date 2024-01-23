@@ -1,3 +1,12 @@
+%%% ==============================================================================
+%%  Purpose: 
+%       This function reads in the information from the penetration file 
+%       that was chosen by the user in 'GetFiles' function and now defined 
+%       with variable `PenFile`. This file should have been created by 
+%       the user in SlugPen. This function uses the TEXT .pen file. 
+%%  Last edit:
+%       01/14/2024 by Kristin Dickerson, UCSC
+%%% ==============================================================================
 
 function    [StationName, ...
             Penetration, ...
@@ -39,7 +48,7 @@ function    [StationName, ...
     Penetration = fscanf(fid,'%s',1);
     
     fseek(fid,0,'bof');
-    Lookup = setstr(fread(fid,255));
+    Lookup = fread(fid,255,'*char');
     Quotes = find(Lookup=='''');
     fseek(fid,Quotes(1),'bof');
     CruiseName = fscanf(fid,'%c',Quotes(2)-Quotes(1)-1);
@@ -60,16 +69,14 @@ function    [StationName, ...
     PenetrationRecord = fscanf(fid,'%d',1);
     HeatPulseRecord = fscanf(fid,'%d',1);
    
-%% MEAN CALIBRATION TEMP DATA 
+%% GET MEAN CALIBRATION TEMPERATYRE DATA 
     Format = repmat('%f ',1,NumberOfSensors);
     MeanCalibTemps = fscanf(fid,Format, ...
         NumberOfSensors+1)';
 
-%% CALIBRATION TEMP DATA (if all calibration temps are recorded, not just the mean)
+%% GET CALIBRATION TEMP DATA (if all calibration temperatures are recorded, not just the mean)
     Format = repmat('%f ',1,NumberOfSensors);
     line = fgetl(fid);
-    %line = fgetl(fid);
-    %linescan = textscan(line, ['%*s %f' Format]);
     i=1;
     CalibTemps=cell(500,NumberOfSensors);
     CalibTemps(cellfun(@isempty,CalibTemps)) = {NaN};
@@ -81,7 +88,7 @@ function    [StationName, ...
         i=i+1;
     end
 
-%% PEN TEMP DATA
+%% GET PENENETRATION TEMPERATURE DATA
 
     linescan = textscan(line, ['%f %f' ,Format]);
     FirstLine = cell2mat(linescan);
