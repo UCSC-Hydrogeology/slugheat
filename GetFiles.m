@@ -105,7 +105,7 @@ function 	[PenFileName, PenFilePath, PenFile, ...
     TAPFile = [PenFilePath TAPFileName];
     MATFile = [PenFilePath MATFileName];
 
-    LogFile = [PenPath '/outputs/' LogFileName];
+    LogFile = [PenPath '/' LogFileName];
     LogFileId = fopen(LogFile,'w');
     
    
