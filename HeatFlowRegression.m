@@ -1,8 +1,10 @@
-%%% ==============================================================================
-% 	Purpose: 
-%	    This function determines "scatter" of heat flow and how it varies with
-%	    decreasing the number of sensors.
-%%% ==============================================================================
+%%% =======================================================================
+%%  Purpose: 
+%       This function determines "scatter" of heat flow and how it varies 
+%       with decreasing the number of sensors.
+%%  Last edit:
+%       01/20/2024 by Kristin Dickerson, UCSC
+%%% =======================================================================
 
 function [Scatter, ...
         ScatterHeatFlow, ...
@@ -12,30 +14,32 @@ function [Scatter, ...
             GoodkIndex, ...
             ShiftedBullardDepths, ...
             MinimumFricEqTemp, ...
-            MinimumFricError, ...
-            Currentk)
+            MinimumFricError)
 
-% ====================================== %
-%               COMPUTE                  %
-% ====================================== %
-
-    % Initiate
+    %% Initiate
     % ----------
      MinimumFricEqTemp = MinimumFricEqTemp';
      MinimumFricError = MinimumFricError';
-     Currentk = Currentk';
 
     % Go through N trials
     % -------------------
-    
     lUsable = length(SensorsUsedForBullardFit);
     NFit = lUsable-2;
-    
+
+    A = zeros(1,length(NFit));
+    B = zeros(1,length(NFit));
+    Sigmaa = zeros(1,length(NFit));
+    Sigmab = zeros(1,length(NFit));
+    Chi2 = zeros(1,length(NFit));
+    Scatter = zeros(1,length(NFit));
+    Covab = zeros(1,length(NFit));
+    rab = zeros(1,length(NFit));
+    Q = zeros(1,length(NFit));
+
     % MH errortrap. If only 2 sensors penetrate, then the following loop will
     % crash - no purpose in doing the regression analysis. Simply return
     if NFit == 0
         Scatter = [];
-        TempOverDepth = [];
         Sigmaa = [];
         Sigmab = [];
         return    
@@ -53,6 +57,8 @@ function [Scatter, ...
     end    
     UseLength = lUsable;
     
+    %% Scatter analysis using Chi2 function
+    % -----------------------------------
     for i=1:NFit
         if length(1:UseLength-(NFit-i)) > 1
             X = BullardDepthsToUse(1:UseLength-(NFit-i));

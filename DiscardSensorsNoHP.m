@@ -1,8 +1,8 @@
 %%% ======================================================================
 %%  Purpose: 
-%        This function removes any unchecked sensors from the data. This is NOT
-%        only display. Whatever sensors are unchecked when this funciton is run
-%        will NOT be included in further processing.
+%        This function removes any unchecked sensors from the dataset. This 
+%        is NOT only display. Whichever sensors are unchecked when this 
+%        function is run will NOT be included in further processing.
 %%  Last edit:
 %       08/11/2023 by Kristin Dickerson, UCSC
 %%% ======================================================================
@@ -19,12 +19,13 @@ function [A, B, C, D, E, F, ...
             TopSensorDepth, ...
             kInitial)
     
-    % Define which sensors are to be ignored
+    %% Define which sensors are to be ignored
     % ------------------------------------
 
         if ~PulseData    
 
-            RelativeDepths = (repmat(NumberOfSensors,1,NumberOfSensors)-(1:NumberOfSensors)) ...
+            RelativeDepths = (repmat(NumberOfSensors,1,NumberOfSensors) ...
+                -(1:NumberOfSensors)) ...
            * SensorDistance + TopSensorDepth;
        
             if ktype == 99
@@ -40,10 +41,7 @@ function [A, B, C, D, E, F, ...
                     + C*RelativeDepths.^2 ...
                     + D*exp(E*RelativeDepths) ...
                     + F*log10(RelativeDepths);
-                kFunction = 1;
-                
-            else
-                Currentk = kInitial;
+                kFunction = 1;                
             end   
         
         end

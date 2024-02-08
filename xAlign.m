@@ -1,10 +1,13 @@
-%%% ==============================================================================
-%   Purpose: 
-%     This function aligns the X axes of each plot on the penetration data
-%     tab. The left edges of the inner position and the plots' widths are
-%     aligned. The order of the plots entered is the order of importance.
-%     All plots will be aligned according the the first named plot's position. 
-%%% ==============================================================================
+%%% =======================================================================
+%%   Purpose: 
+%       This function aligns the X axes of each plot on the penetration 
+%       data tab. The left edges of the inner position and the plots' 
+%       widths are aligned. The order of the plots entered is the order of 
+%       importance. All plots will be aligned according the the first named 
+%       plot's position. 
+%%  Last edit:
+%       01/14/2024 by Kristin Dickerson, UCSC
+%%% =======================================================================
 
 function xAlign(Plot1, Axes1, Plot2, Axes2, Plot3, Axes3, Plot4, Axes4)
 

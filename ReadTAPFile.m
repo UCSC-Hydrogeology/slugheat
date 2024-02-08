@@ -1,10 +1,13 @@
-%%% ==============================================================================
-%   Purpose: 
-%     This function READS in the tilt and pressure (.tap) information from the penetration that was chosen 
-%     in 'GetFiles' function and defined now as variable `TAPFile`. This file should have been created by SlugPen. 
-%     Instead of using the .tap text file, this function uses the MAT file `MATFile` 
-%     that houses structures containing these variables.
-%%% ======================================================================================
+%%% =======================================================================
+%%  Purpose: 
+%       This function reads in the information from the penetration that was 
+%       chosen in 'GetFiles' function. 
+%       This file should have been created by SlugPen. Instead of using the 
+%       .tap text file, this function uses the .mat file `MATFile` that 
+%       houses structures containing these variables.
+%%  Last edit:
+%       01/14/2024 Kristin Dickerson, UCSC
+%%% =======================================================================
 
 function [TAPRecord, ...
          Tilt, Depth ...
