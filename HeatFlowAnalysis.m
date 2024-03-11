@@ -1,6 +1,6 @@
 %%% ======================================================================
 %%   Purpose: 
-%       This function computes heat flow using the Bullard method
+%       This function computes heat flow using the Bullard method 
 %%   Last edit:
 %       08/09/2023 by Kristin Dickerson, UCSC
 %%% ======================================================================
@@ -29,12 +29,7 @@ function   [ ...
              BadT, ...
              SensorsToUse)
 
-
-% ====================================== %
-%               COMPUTE                  %
-% ====================================== %
-
-    % Define what sensors to use
+    %% Define what sensors to use
     % --------------------------
     
     GoodT = setxor(1:NumberOfSensors,BadT);
@@ -43,22 +38,18 @@ function   [ ...
     TToUse = intersect(GoodT,SensorsToUse);    % SensorsToUse for temperature calculations (T)
     kToUse = intersect(Goodk,SensorsToUse);    % SensorsToUse for thermal conductivity calculations (k)
 
-
-    % Shift Relative Depths
-    % ---------------------
     
-    % Here we do a least-squares fit of the temperatures 
+    %% Least-squares fit of the temperatures 
     % --------------------------------------------------
 
     MinimumFricEqTemp = MinimumFricEqTemp';
     
-    % =========================
-    % ORIGINAL ERROR ASSESSMENT
+    % ====================================================================
+    %%           ORIGINAL ERROR ASSESSMENT for TEMPERATURES
+    %              - this is a similar error assessment as
+    %                described in Villinger and Davis, 1987
 
-        [pz, ~] = polyfit(MinimumFricEqTemp(TToUse),RelativeDepths(TToUse),1);
-        
-        %% NOTE:
-        %% ================================================================
+            %% NOTE:
             % pz returns a vector of coefficients for a polynomial with 
             % 1 degree 
             % y = mx + b
@@ -66,8 +57,12 @@ function   [ ...
                 % x = equilibrium temperatures
                 % m = pz(1) = slope of linear best fit line
                 % b = pz(2) = y intercept of the linear best fit line
-         %% ===============================================================
+
+        %% Fit a linear regression through the data
+        % ---------------------------------------
+        [pz, ~] = polyfit(MinimumFricEqTemp(TToUse),RelativeDepths(TToUse),1);
     
+        % Get the shift and slope
         Shift(1) = -pz(2);
         Slope(1) = pz(1);
         
@@ -78,33 +73,24 @@ function   [ ...
         % Define the shifted depth of the SHALLOWEST (top most) sensor as the
         % penetation lag (how far the shallowest sensor is form the seafloor)
         PenetrationLag(1) = ShiftedRelativeDepths(max(TToUse));  
+
+    %%           ORIGINAL ERROR ASSESSMENT for TEMPERATURES
+    % ====================================================================
+
+
+    %% BP error assessment of thermal gradient
+    % -----------------------------------------
+    [ShiftGrad,SlopeGrad,ShiftGradErr,SlopeGradErr]=...
+        ChiSquaredFit(MinimumFricEqTemp(TToUse)',RelativeDepths(TToUse)'); % BP
+    ShiftGrad=-ShiftGrad;
+
+
+    %% Compute Cumulative Thermal Resistance
+    % -------------------------------------
     
-        % Error assesment of linear best fit line (vector SigmaT shows
-        % difference in each sensor's temperature relative to the best fit
-        % line)
-        % [T_fit,SigmaT] = polyval(pz,MinimumFricEqTemp(TToUse),Sz);
-        % MeanSigmaT = mean(SigmaT); 
-
-    % ORIGINAL ERROR ASSESSMENT
-    % =========================
-
-
-
-    % =========================
-    % BP 2017 ERROR ASSESSMENT
-        
-        [ShiftGrad,SlopeGrad,ShiftGradErr,SlopeGradErr]=ChiSquaredFit(MinimumFricEqTemp(TToUse)',RelativeDepths(TToUse)'); % BP
-        ShiftGrad=-ShiftGrad;
-
-    % BP 2017 ERROR ASSESSMENT
-    % =========================
-
-
-    % Cumulative Thermal Resistance
-    % -----------------------------
-    
-    % Here we compute Cumulative Thermal Resistance using all conductivities 
-    % not ignored or discarded (even if the Temperature was discarded)
+    % Compute Cumulative Thermal Resistance using all conductivity 
+    % estimations that are not ignored or discarded (even if the 
+    % temperature was discarded)
     
     CTR = NaN*ones(NumberOfSensors,1);
 
@@ -116,13 +102,13 @@ function   [ ...
     % originally ignored because their conductivities were ignored in the
     % Cumulative Thermal Resistance calculation.)
     
-    [CTRToUse, ~, GoodkIndex] = intersect(TToUse,kToUse);
+    %[CTRToUse, ~, ~] = intersect(TToUse,kToUse); 
+    CTRToUse = kToUse;
+    GoodkIndex=CTRToUse;
     SensorsUsedForBullardFit = CTRToUse;
 
-
-
-    % =========================
-    % ORIGINAL ERROR ASSESSMENT
+        % ===========================================================
+        %%            ORIGINAL ERROR ASSESSMENT for CTR
     
         % Get linear best fit line of temperature vs cumulative thermal resistance (instead of depth)
         % but only for sensors used in cumulative thermal resistance calculation
@@ -136,23 +122,19 @@ function   [ ...
         % line goes through zero when CTR is zero 
         ShiftedCTR = CTR + Shift(2);
 
-    % ORIGINAL ERROR ASSESSMENT
-    % =========================
+        %%            ORIGINAL ERROR ASSESSMENT for CTR
+        % ===========================================================
 
-    
-     
-    % =========================
-    % BP 2017 ERROR ASSESSMENT
-        
-        [ShiftCTR,SlopeCTR,ShiftCTRErr,SlopeCTRErr,~]=ChiSquaredFit(MinimumFricEqTemp(CTRToUse)',CTR(CTRToUse)); % BP
-        ShiftCTR=-ShiftCTR; % BP
 
-    % BP 2017 ERROR ASSESSMENT
-    % =========================
+    %% BP error assessment of CTR
+    % ---------------------------
+    [ShiftCTR,SlopeCTR,ShiftCTRErr,SlopeCTRErr,~]=...
+        ChiSquaredFit(MinimumFricEqTemp(CTRToUse)',CTR(CTRToUse)); % BP
+    ShiftCTR=-ShiftCTR; 
    
-% ================================================ %
-% CALCULATE THERMAL GRADIENT, AVERAGE k, HEAT FLOW
-% ================================================ %
+
+%% Calculate thermal gradient, average k, and heat flow
+% -------------------------------------------------
      
     % Calculate thermal gradient and depth to top sensor
     % -------------------------------------------------
@@ -164,7 +146,7 @@ function   [ ...
     GradShiftErr = mean([abs((ShiftGrad)-((ShiftGrad+ShiftGradErr))),...
             abs((ShiftGrad)-((ShiftGrad-ShiftGradErr)))]); % BP
 
-    % Calculate Average Thermal Conductivity +/- 1 std
+    % Calculate average thermal conductivity +/- 1 std
     % ------------------------------------------------
     kmean = mean(Currentk(kToUse));
     kErr  = std(Currentk(kToUse));
