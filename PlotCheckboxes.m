@@ -1,8 +1,10 @@
-%%% ==============================================================================
-%   Purpose: 
-%     This function plots all sensor checkbox panels for each tab, along
-%     with callbacks for each checkbox to turn sensor lines on and off
-%%% ==============================================================================
+%%% =======================================================================
+%%  Purpose: 
+%       This function plots all sensor checkbox panels for each tab, along
+%       with callbacks for each checkbox to turn sensor lines on and off
+%%  Last edit:
+%       01/19/2024 by Kristin Dickerson, UCSC        
+%%% =======================================================================
 
 function [PenCheckboxes, ...
           FricCheckboxes, ...
@@ -31,6 +33,8 @@ function [PenCheckboxes, ...
               h_axHPTempvTimeShift, ...
               h_axHPTempvTimeShiftBestFit)
 
+% Initialize structure of panels for each checkbox
+% -----------------------------------------------
 Panels = {panel_PD_Thermistors, panel_FD_Thermistors, ...
               panel_HPD_Thermistors, ...
               panel_BA_Thermistors, ...
@@ -39,15 +43,15 @@ Panels = {panel_PD_Thermistors, panel_FD_Thermistors, ...
 
 for n=1:numel(Panels)
 
-% Plot sensor checkboxes
-% ----------------------
+%% Plot sensor checkboxes
 
     % Grid layout for sensor panel
     % -----------------------------
         
         for i=NumberOfSensors:-1:1
             ThermistorGrid = uigridlayout(Panels{n}, 'BackgroundColor', ...
-            [0.94 0.94 0.94], 'ColumnWidth', {'100x'}, 'RowHeight', cellstr(repmat('1x', NumberOfSensors, 1))');
+            [0.94 0.94 0.94], 'ColumnWidth', {'100x'}, 'RowHeight', ...
+            cellstr(repmat('1x', NumberOfSensors, 1))');
         end
 
 
@@ -75,7 +79,8 @@ for n=1:numel(Panels)
       for i=NumberOfSensors:-1:1
           if n==1
               PenCheckboxes{i} = uicheckbox(SensorGrids{i}, 'Text', '', ...
-                  'Value',true, 'Tooltip', ['Check to display data from sensor T' num2str(i) ' on plots'], ...
+                  'Value',true, 'Tooltip', ['Check to display data ' ...
+                  'from sensor T' num2str(i) ' on plots'], ...
                   'tag',['c_b_' num2str(i)]);
                   
               drawnow;
@@ -87,7 +92,8 @@ for n=1:numel(Panels)
 
           elseif n==2
               FricCheckboxes{i} = uicheckbox(SensorGrids{i}, 'Text', '', ...
-                  'Value',true, 'Tooltip', ['Check to display data from sensor T' num2str(i) ' on plots'], ...
+                  'Value',true, 'Tooltip', ['Check to display data ' ...
+                  'from sensor T' num2str(i) ' on plots'], ...
                   'tag',['c_b_' num2str(i)]);
               drawnow;
 
@@ -98,7 +104,8 @@ for n=1:numel(Panels)
 
           elseif n==3
               HPCheckboxes{i} = uicheckbox(SensorGrids{i}, 'Text', '', ...
-                  'Value',true, 'Tooltip', ['Check to display data from sensor T' num2str(i) ' on plots'], ...
+                  'Value',true, 'Tooltip', ['Check to display data ' ...
+                  'from sensor T' num2str(i) ' on plots'], ...
                   'tag',['c_b_' num2str(i)]);
 
 
@@ -112,8 +119,8 @@ for n=1:numel(Panels)
 
 end
 
-
-
+%% Set functions for turning checkboxes 'on' or 'off', which shows or 
+%% hides data from individual sensors on each plot
     for i=SensorsToUse
     PenCheckboxes{i}.ValueChangedFcn = {@cbValueChange, ...
                   h_axTempAboveBWT(i), ...
@@ -174,3 +181,4 @@ end
                   FricCheckboxes(i), ...
                   HPCheckboxes(i)};
     end
+

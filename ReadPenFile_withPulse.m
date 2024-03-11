@@ -1,10 +1,13 @@
-%%% ==============================================================================
-%   Purpose: 
-%     This function READS in the information from the penetration that was chosen 
-%     in 'GetFiles' function and defined now as variable `PenFile`. This file should have been created by SlugPen. 
-%     Instead of using the .pen text file, this function uses the MAT file `MATFile` 
-%     that houses structures containing these variables.
-%%% ==============================================================================
+%%% =======================================================================
+%%  Purpose: 
+%       This function reads in the information from the penetration that was 
+%       chosen in 'GetFiles' function and defined now as variable `PenFile`. 
+%       This file should have been created by SlugPen. Instead of using the 
+%       .pen text file, this function uses the .mat file `MATFile` that 
+%       houses structures containing these variables.
+%%  Last edit:
+%       01/14/2024 Kristin Dickerson, UCSC
+%%% =======================================================================
 
 function [S_MATFile, FullExpeditionName, ...
             StationName, ...
@@ -18,6 +21,7 @@ function [S_MATFile, FullExpeditionName, ...
             LoggerId, ...
             ProbeId, ...
             NumberOfSensors, ...
+            NumberOfSensorsWorking,...
             PenetrationRecord, ...
             HeatPulseRecord, ...
             EndRecord, ...
@@ -26,7 +30,10 @@ function [S_MATFile, FullExpeditionName, ...
             WaterSensorRawData, ...
             MeanCalibTemps, ...
             PulsePower...
-    ] = ReadPenFile_withPulse(MATFile, LogFileId, PenFile, ProgramLogId, figure_Main)
+            ] = ReadPenFile_withPulse(MATFile, ...
+            LogFileId, PenFile, ProgramLogId, figure_Main)
+
+%% Read in data
 
     % Load the MAT file
     % ----------------------------
@@ -53,20 +60,20 @@ function [S_MATFile, FullExpeditionName, ...
     PenetrationRecord   = S_MATFile.S_PENVAR.PenetrationRecord;
     HeatPulseRecord     = S_MATFile.S_PENVAR.HeatPulseRecord;
     EndRecord           = S_MATFile.S_PENVAR.EndRecord;
-    BottomWaterRawData  = S_MATFile.S_PENVAR.BottomWaterRawData;
     AllRecords          = S_MATFile.S_PENVAR.AllRecords';
     AllSensorsRawData   = S_MATFile.S_PENVAR.AllSensorsRawData;
     WaterSensorRawData  = S_MATFile.S_PENVAR.WaterSensorRawData;
-    MeanCalibTemps          = S_MATFile.S_PENVAR.CalibrationTemps;
+    MeanCalibTemps      = S_MATFile.S_PENVAR.CalibrationTemps;
     
     FullExpeditionName  = strcat(CruiseName, StationName, Penetration);
 
-% Update LOG file
-% -------------------------------------
+    % Update LOG file
+    % -------------------------------------
+    
+    PrintStatus(LogFileId, ['Penetration file ' PenFile ' read ...'],1)
+    
+    PrintStatus(ProgramLogId, '-- Reading in penetatration file',2)
 
-PrintStatus(LogFileId, ['Penetration file ' PenFile ' read ...'],1)
-
-PrintStatus(ProgramLogId, '-- Reading in penetatration file',2)
 
 %% Remove any sensors with all NaN or -999 temperatures
 
@@ -89,16 +96,17 @@ PrintStatus(ProgramLogId, '-- Reading in penetatration file',2)
     % Remove these sensors from number of sensors
     [~,NumSensTot]   = size(AllSensorsRawData);
     
-    if ~all(WaterSensorRawData==-999)
+    if ~all(WaterSensorRawData==-999) && ~all(isnan(WaterSensorRawData))
         [~,NumWaterSens] = size(WaterSensorRawData);
     else
         NumWaterSens=0;
     end
     
-    % Set number of sensors
-    NumberOfSensors = NumSensTot-NumWaterSens;
+    % Set number of working sensors
+    NumberOfSensorsWorking = NumSensTot-NumWaterSens;
 
-%% Tell user if no calibration period was selected
+%% Inform user if no calibration period was selected
+
     if all(MeanCalibTemps==-999)
         uialert(figure_Main, ['\bf No calibration period was selected ' newline newline ...
        'Temperature sensors will not be calibrated unless a ' ...
