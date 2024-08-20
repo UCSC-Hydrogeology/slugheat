@@ -31,7 +31,6 @@ function   [ ...
 
     %% Define what sensors to use
     % --------------------------
-    
     GoodT = setxor(1:NumberOfSensors,BadT);
     Goodk = setxor(1:NumberOfSensors,Badk);
     
