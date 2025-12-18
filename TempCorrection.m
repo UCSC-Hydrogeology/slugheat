@@ -62,13 +62,16 @@ end
 
 % Determine if the raw data has a bottom water sensor based on number of
 % columns and number of sensors noted in .pen file. 
+
+%% COMMENTED OUT BY KD 12/18/2025 bc too annoying to have to specify this 
+%% in SlugPen. 
 % ------------------------------------------------------------------------
-[~,NC]=size(AllSensorsRawData);
-if NC == NumberOfSensors+1 
-    WaterThermistor = 1;
-elseif NC == NumberOfSensors 
-    WaterThermistor = 0; 
-end
+%[~,NC]=size(AllSensorsRawData);
+%if NC == NumberOfSensors+1 
+%    WaterThermistor = 1;
+%elseif NC == NumberOfSensors 
+%    WaterThermistor = 0; 
+%end
 
 
 % SENSOR CALIBRATION
@@ -114,8 +117,14 @@ if ~all(MeanCalibTemps==-999)
     pause(1)
 end
 
+
+
 %% TEMPS RELATIVE TO BOTTOM WATER
 %% ===============================
+
+WaterSensorTemp = AllSensorsCalibratedTemp(:, end); %+ Offset; KD--> Not
+%sure why this would be offset, so I'm taking it out for now. Plotted is
+%the actual recorded temp from the water sensor
 
 % Determine bottom water
 % -----------------------
@@ -127,7 +136,7 @@ end
 % before penetration OR the user can manually input a bottom water
 % temperature
     if WaterThermistor == 1 && BWChosen == 0
-        BottomWaterValue = mean(PenTopSens, 1, 'omitnan');
+        BottomWaterValue = mean(WaterSensorTemp, 1, 'omitnan');
         assignin('base', "BottomWaterValue",BottomWaterValue);
     elseif BWChosen == 0
         ChooseBW = uiconfirm(figure_Main, ['Bottom water sensor is not found or is being ignored.' newline ...
@@ -174,9 +183,6 @@ end
 % Manual offset
 % -------------
 AllSensorsTempRelBW = AllSensorsTempRelBW + Offset;
-WaterSensorTemp = AllSensorsCalibratedTemp(:, end); %+ Offset; KD--> Not
-%sure why this would be offset, so I'm taking it out for now. Plotted is
-%the actual recorded temp from the water sensor
 
 BottomWaterTemp = BottomWaterTemp(1);
 
